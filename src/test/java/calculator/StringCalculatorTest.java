@@ -2,12 +2,9 @@ package calculator;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-
- // StringCalculator 클래스에 대한 테스트 코드입니다.
- // 'null/빈 문자열 처리', '단일 숫자 반환', '쉼표 및 콜론 구분자 처리' 기능을 검증합니다.
 
 class StringCalculatorTest {
 
@@ -41,5 +38,22 @@ class StringCalculatorTest {
         assertEquals(10, calculator.add("5:5"));
     }
 
-    // 커스텀 구분자 및 예외 처리 테스트는 다음 단계에서 추가됩니다.
+    @Test
+    @DisplayName("쉼표와 콜론으로 문자열 분리 배열을 정확하게 반환한다.")
+    void shouldSplitByCommaAndColon() {
+        assertArrayEquals(new String[]{"1", "2", "3"}, StringCalculator.split("1,2:3"));
+        assertArrayEquals(new String[]{"5", "5"}, StringCalculator.split("5:5"));
+        assertArrayEquals(new String[]{"1", "2", "3", "4", "5"}, StringCalculator.split("1:2,3:4,5"));
+    }
+
+    @Test
+    @DisplayName("커스텀 구분자 및 기본 구분자로 문자열 분리 배열을 정확하게 반환한다.")
+    void shouldSupportCustomDelimiter() {
+        // 커스텀 구분자 ';' 사용
+        assertArrayEquals(new String[]{"1", "2", "3"}, StringCalculator.split("//;\n1;2;3"));
+        // 커스텀 구분자 ','는 기본 구분자로 처리되어 분리됨
+        assertArrayEquals(new String[]{"1", "2", "3"}, StringCalculator.split("//,\n1,2,3"));
+        // 커스텀 구분자 'k' 사용 및 기본 구분자 ':'
+        assertArrayEquals(new String[]{"1", "5", "10", "20"}, StringCalculator.split("//k\n1:5k10:20"));
+    }
 }
