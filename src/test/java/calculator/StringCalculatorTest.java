@@ -49,7 +49,7 @@ class StringCalculatorTest {
         assertArrayEquals(new String[]{"1", "5", "10", "20"}, StringCalculator.split("//k\n1:5k10:20"));
     }
 
-    // [예외 처리] 숫자가 아닌 입력 시 예외 처리
+    // 숫자가 아닌 문자열이 포함될 경우 예외 처리
     @Test
     @DisplayName("숫자가 아닌 문자열이 포함될 경우 IllegalArgumentException 발생")
     void shouldThrowExceptionForNonNumericInput() {
@@ -61,7 +61,7 @@ class StringCalculatorTest {
         });
     }
 
-    // [예외 처리] 음수 입력 시 예외 처리
+    // 음수 입력 시 예외 처리
     @Test
     @DisplayName("음수가 입력될 경우 IllegalArgumentException 발생")
     void shouldThrowExceptionForNegativeNumbers() {
