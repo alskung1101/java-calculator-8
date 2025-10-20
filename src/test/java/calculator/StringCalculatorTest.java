@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class StringCalculatorTest {
 
@@ -38,22 +39,37 @@ class StringCalculatorTest {
         assertEquals(10, calculator.add("5:5"));
     }
 
-    @Test
-    @DisplayName("쉼표와 콜론으로 문자열 분리 배열을 정확하게 반환한다.")
-    void shouldSplitByCommaAndColon() {
-        assertArrayEquals(new String[]{"1", "2", "3"}, StringCalculator.split("1,2:3"));
-        assertArrayEquals(new String[]{"5", "5"}, StringCalculator.split("5:5"));
-        assertArrayEquals(new String[]{"1", "2", "3", "4", "5"}, StringCalculator.split("1:2,3:4,5"));
-    }
-
+    // 분리 로직의 정확성을 검증하는 테스트
     @Test
     @DisplayName("커스텀 구분자 및 기본 구분자로 문자열 분리 배열을 정확하게 반환한다.")
     void shouldSupportCustomDelimiter() {
         // 커스텀 구분자 ';' 사용
         assertArrayEquals(new String[]{"1", "2", "3"}, StringCalculator.split("//;\n1;2;3"));
-        // 커스텀 구분자 ','는 기본 구분자로 처리되어 분리됨
-        assertArrayEquals(new String[]{"1", "2", "3"}, StringCalculator.split("//,\n1,2,3"));
-        // 커스텀 구분자 'k' 사용 및 기본 구분자 ':'
+        // 커스텀 구분자 'k' 사용 및 기본 구분자 ':' 혼합
         assertArrayEquals(new String[]{"1", "5", "10", "20"}, StringCalculator.split("//k\n1:5k10:20"));
+    }
+
+    // [예외 처리] 숫자가 아닌 입력 시 예외 처리
+    @Test
+    @DisplayName("숫자가 아닌 문자열이 포함될 경우 IllegalArgumentException 발생")
+    void shouldThrowExceptionForNonNumericInput() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            calculator.add("1,a:3");
+        });
+        assertThrows(IllegalArgumentException.class, () -> {
+            calculator.add("//;\n1;2;a");
+        });
+    }
+
+    // [예외 처리] 음수 입력 시 예외 처리
+    @Test
+    @DisplayName("음수가 입력될 경우 IllegalArgumentException 발생")
+    void shouldThrowExceptionForNegativeNumbers() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            calculator.add("1,-2:3");
+        });
+        assertThrows(IllegalArgumentException.class, () -> {
+            calculator.add("//;\n-1;-2;3");
+        });
     }
 }

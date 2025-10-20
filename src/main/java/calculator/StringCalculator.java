@@ -16,14 +16,13 @@ public class StringCalculator {
             return 0;
         }
 
-        // 모든 구분자가 통합된 로직을 사용하여 문자열을 분리합니다.
         String[] numbers = split(input);
 
-        // 현재 단계는 분리 기능만 구현합니다.
-        return 0;
+        // 분리된 문자열을 검증하고 합산
+        return calculateSumFromTokens(numbers);
     }
 
-    // (커스텀 + 기본) 통합하여 처리하는 분리 로직
+    // 모든 구분자를 통합하여 처리하는 분리 로직
     public static String[] split(String input) {
         if (input == null || input.isEmpty()) {
             return new String[]{};
@@ -32,17 +31,39 @@ public class StringCalculator {
         Matcher m = CUSTOM_DELIMITER_PATTERN.matcher(input);
 
         if (m.find()) {
-            // 1. 커스텀 구분자 추출 및 통합 정규식 생성
             String customDelimiter = m.group(1);
-
             String regex = DEFAULT_DELIMITERS + "|" + Pattern.quote(customDelimiter);
-
-            // 2. 숫자 문자열 추출 및 통합 정규식으로 분리
             String numbersToSplit = m.group(2);
             return numbersToSplit.split(regex);
         }
 
-        // 3. 커스텀 패턴이 없을 경우, 기본 구분자로 분리
         return input.split(DEFAULT_DELIMITERS);
+    }
+
+    // 분리된 숫자 토큰들을 검증하고 합산하는 메서드 (예외 처리 포함)
+    private int calculateSumFromTokens(String[] tokens) {
+        int sum = 0;
+        for (String numberString : tokens) {
+            if (numberString.isEmpty()) {
+                continue;
+            }
+
+            int number;
+            try {
+                // 숫자가 아닌 문자열이 포함될 경우 NumberFormatException 발생
+                number = Integer.parseInt(numberString);
+            } catch (NumberFormatException e) {
+                // 숫자가 아닌 문자열 예외 처리
+                throw new IllegalArgumentException("숫자가 아닌 문자열(" + numberString + ")이 포함되어 있습니다.");
+            }
+
+            // 음수일 경우 예외 처리
+            if (number < 0) {
+                throw new IllegalArgumentException("음수(" + number + ")는 입력할 수 없습니다.");
+            }
+
+            sum += number;
+        }
+        return sum;
     }
 }
