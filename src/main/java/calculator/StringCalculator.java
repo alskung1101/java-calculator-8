@@ -9,7 +9,7 @@ public class StringCalculator {
     private static final String DEFAULT_DELIMITERS = ",|:";
 
     // 커스텀 구분자를 추출하기 위한 패턴 정의
-    private static final Pattern CUSTOM_DELIMITER_PATTERN = Pattern.compile("//(.)\n(.*)");
+    private static final Pattern CUSTOM_DELIMITER_PATTERN = Pattern.compile("//(.)(\\n|\\\\n)(.*)");
 
     public int add(String input) {
         if (input == null || input.isEmpty()) {
@@ -33,7 +33,7 @@ public class StringCalculator {
         if (m.find()) {
             String customDelimiter = m.group(1);
             String regex = DEFAULT_DELIMITERS + "|" + Pattern.quote(customDelimiter);
-            String numbersToSplit = m.group(2);
+            String numbersToSplit = m.group(3);
             return numbersToSplit.split(regex);
         }
 
